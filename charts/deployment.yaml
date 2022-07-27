@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bcbot
+  labels:
+    app: bcbot
+spec:
+  selector:
+    matchLabels:
+      app: bcbot
+  template:
+    metadata:
+      labels:
+        app: bcbot
+    spec:
+      containers:
+      - name: bcbot
+        image: jgruneir/bcbot:1.03
+        imagePullPolicy: Always
+        env:
+        - name: DISCORD_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bc-discord-token
+              key: token
+              optional: false # same as default; "mysecret" must exist
+                              # and include a key named "username"
+        - name: PRIVATE_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: gcloud
+              key: private-key-id
+              optional: false # same as default; "mysecret" must exist
+                              # and include a key named "username"
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: gcloud
+              key: private-key
+              optional: false # same as default; "mysecret" must exist
+                              # and include a key named "username"
+        - name: CLIENT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: gcloud
+              key: client-email
+              optional: false # same as default; "mysecret" must exist
+                              # and include a key named "username"
+        - name: CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: gcloud
+              key: client-id
+              optional: false # same as default; "mysecret" must exist
+                              # and include a key named "username"
+        resources:
+          limits:
+            cpu: 300m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
